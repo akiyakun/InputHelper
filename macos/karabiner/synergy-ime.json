@@ -1,0 +1,108 @@
+{
+  "title": "Synergy - Cmd tap for Microsoft IME",
+  "rules": [
+    {
+      "description": "Synergy: Cmd tap IME off/on (v6: PowerToys Ctrl+Shift+9/0)",
+      "manipulators": [
+        {
+          "type": "basic",
+          "description": "Pass plain Enter through while controlling Windows; bypass Mac app Enter rules",
+          "from": {
+            "key_code": "return_or_enter",
+            "modifiers": {
+              "optional": [
+                "caps_lock"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "return_or_enter"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "customenter_synergy_windows",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "left_command",
+            "modifiers": {
+              "optional": [
+                "caps_lock"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "left_command",
+              "lazy": true
+            }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "9",
+              "modifiers": [
+                "left_command",
+                "left_shift"
+              ]
+            },
+            {
+              "key_code": "vk_none"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "customenter_synergy_windows",
+              "value": 1
+            }
+          ],
+          "description": "Cmd tap: IME OFF via PowerToys; Synergy maps Mac Command to Windows Ctrl"
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "right_command",
+            "modifiers": {
+              "optional": [
+                "caps_lock"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "right_command",
+              "lazy": true
+            }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "0",
+              "modifiers": [
+                "left_command",
+                "left_shift"
+              ]
+            },
+            {
+              "key_code": "vk_none"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "customenter_synergy_windows",
+              "value": 1
+            }
+          ],
+          "description": "Cmd tap: IME ON via PowerToys; Synergy maps Mac Command to Windows Ctrl"
+        }
+      ]
+    }
+  ]
+}
