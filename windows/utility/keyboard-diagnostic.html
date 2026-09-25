@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ja"><meta charset="utf-8"><title>Synergy キー受信診断</title>
+<style>body{font:16px system-ui;max-width:1100px;margin:32px auto;padding:0 20px;background:#f4f6f8;color:#17212b}textarea{box-sizing:border-box;width:100%;height:130px;font:22px system-ui;padding:12px}pre{background:#17212b;color:#e2f3e8;padding:16px;overflow:auto;min-height:200px;font-size:13px}button{padding:10px 18px;margin:12px 8px 12px 0}h1{font-size:24px}</style>
+<h1>Synergy キー受信診断（Windows側で開いてください）</h1>
+<p>入力欄をクリックし、右Cmd単押し→左Cmd単押しを、各1秒以上空けて2回ずつ試してください。その後、日本語の変換確定Enterも試してください。</p>
+<p>通信・設定変更は行いません。入力文字はログに保存せず、修飾キー・CapsLock・Enterと変換開始／終了だけを記録します。Caps列はブラウザが報告する状態です。</p>
+<textarea placeholder="ここで操作してください"></textarea>
+<button id="clear">ログ消去</button><button id="save">ログを保存</button>
+<pre id="log"></pre>
+<script>
+const rows=[];const log=document.querySelector('#log');
+function add(s){rows.push(s);if(rows.length>400)rows.shift();log.textContent=rows.join('\n');log.scrollTop=log.scrollHeight;}
+function stamp(){return new Date().toISOString().slice(11,23);}
+add('時刻(UTC)    種類             key / code | Ctrl Alt Shift Meta Caps Compose Repeat');
+for(const type of ['keydown','keyup'])document.querySelector('textarea').addEventListener(type,e=>{
+ if(!/^(CapsLock|ControlLeft|ControlRight|AltLeft|AltRight|MetaLeft|MetaRight|Enter|NumpadEnter|Backquote|ShiftLeft|ShiftRight|Lang1|Lang2|Convert|NonConvert|KanaMode)$/.test(e.code))return;
+ const flags=[e.ctrlKey,e.altKey,e.shiftKey,e.metaKey,e.getModifierState('CapsLock'),e.isComposing,e.repeat].map(Number).join('    ');
+ // Do not record printable event.key values (Backquote may produce text).
+ const key=e.key.length===1?'[文字キー]':e.key;
+ add(`${stamp()} ${type.padEnd(16)} ${key} / ${e.code} | ${flags}`);
+});
+for(const type of ['compositionstart','compositionend','blur','focus'])document.querySelector('textarea').addEventListener(type,()=>add(`${stamp()} ${type}`));
+document.querySelector('#clear').onclick=()=>{rows.length=0;log.textContent='';};
+document.querySelector('#save').onclick=()=>{const u=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/plain;charset=utf-8'}));const a=document.createElement('a');a.href=u;a.download='synergy-key-events.txt';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);};
+</script></html>
