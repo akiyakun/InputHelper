@@ -4,6 +4,7 @@
 import argparse
 from contextlib import closing
 import os
+import logging
 from pathlib import Path
 import re
 import select
@@ -31,9 +32,9 @@ def watch(path, seconds, on_line=None, on_reset=None):
     pending = b''
     startup = True
     missing = False
-    print(f'監視対象: {path}', flush=True)
-    print('現在の操作先は未判定。起動後の画面移動を検知します。', flush=True)
-    print('MacとWindowsの間でマウスを往復してください。終了: Ctrl+C', flush=True)
+    logging.info(f'監視対象: {path}')
+    logging.info('現在の操作先は未判定。起動後の画面移動を検知します。')
+    logging.info('MacとWindowsの間でマウスを往復してください。終了: Ctrl+C')
 
     def register(queue, fd):
         event = select.kevent(
@@ -60,7 +61,7 @@ def watch(path, seconds, on_line=None, on_reset=None):
                 result = describe(line)
                 if result:
                     detected = time.strftime('%H:%M:%S')
-                    print(f'検知 {detected} | {result}', flush=True)
+                    logging.info(f'検知 {detected} | {result}')
 
     # Watch the directory too: a rotated log is a different inode, and may
     # appear some time after the old file has been renamed/deleted.
@@ -75,7 +76,7 @@ def watch(path, seconds, on_line=None, on_reset=None):
                     stat = None
                 if stat is None:
                     if not missing:
-                        print('ログが見つかりません。作成通知を待機します。', flush=True)
+                        logging.info('ログが見つかりません。作成通知を待機します。')
                     missing = True
                     drain()
                     if on_reset:
@@ -102,19 +103,19 @@ def watch(path, seconds, on_line=None, on_reset=None):
                             if startup:
                                 stream.seek(0, os.SEEK_END)
                             else:
-                                print('新しいログを検知。先頭から監視します。', flush=True)
+                                logging.info('新しいログを検知。先頭から監視します。')
                     if stream is not None:
                         if os.fstat(stream.fileno()).st_size < stream.tell():
                             if on_reset:
                                 on_reset()
                             stream.seek(0)
                             pending = b''
-                            print('ログの切り詰めを検知。先頭から監視します。', flush=True)
+                            logging.info('ログの切り詰めを検知。先頭から監視します。')
                         drain()
                     missing = False
                 if startup:
                     startup = False
-                    print('監視開始（kqueue方式・定期ポーリングなし）', flush=True)
+                    logging.info('監視開始（kqueue方式・定期ポーリングなし）')
                 timeout = None if deadline is None else max(0, deadline - time.monotonic())
                 queue.control(None, 8, timeout)
     finally:
@@ -124,6 +125,7 @@ def watch(path, seconds, on_line=None, on_reset=None):
 
 
 def main():
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--log', type=Path,
                         default=Path.home() / 'Library/Logs/Synergy/synergy.log')
@@ -135,7 +137,7 @@ def main():
     try:
         watch(args.log.expanduser(), seconds=args.seconds)
     except KeyboardInterrupt:
-        print('\n監視を終了しました。', flush=True)
+        logging.info('\n監視を終了しました。')
 
 
 if __name__ == '__main__':

@@ -4,6 +4,8 @@
 import argparse
 import fcntl
 import json
+import logging
+from logging.handlers import RotatingFileHandler
 import os
 from pathlib import Path
 import re
@@ -38,8 +40,7 @@ class Bridge:
         if 'error' in output.casefold():
             raise RuntimeError(f'Karabinerへの設定に失敗しました: {output}')
         self.active = active
-        print('Karabiner: ' + ('Windows用IMEルール ON' if active else '通常ルール（Windows用 OFF）'),
-              flush=True)
+        logging.info('Karabiner: ' + ('Windows用IMEルール ON' if active else '通常ルール（Windows用 OFF）'))
 
     def reset(self):
         self.set_active(False)
@@ -67,9 +68,17 @@ def main():
                         default=Path.home() / 'Library/Logs/Synergy/synergy.log')
     parser.add_argument('--target', default='s500plus-27441e4d')
     parser.add_argument('--reset', action='store_true', help='監視せず、Windows用ルールをOFFにする')
+    parser.add_argument('--service-log', type=Path, help='容量制限付きの監視ログ')
     args = parser.parse_args()
+    handlers = None
+    if args.service_log:
+        args.service_log.parent.mkdir(parents=True, exist_ok=True)
+        handlers = [RotatingFileHandler(args.service_log, maxBytes=1024 * 1024,
+                                        backupCount=3, encoding='utf-8')]
+    logging.basicConfig(level=logging.INFO, handlers=handlers,
+                        format='%(asctime)s %(levelname)s %(message)s')
     if not CLI.is_file():
-        parser.error(f'Karabiner CLIが見つかりません: {CLI}')
+        raise RuntimeError(f'Karabiner CLIが見つかりません: {CLI}')
     bridge = Bridge(args.target)
     if args.reset:
         bridge.reset()
@@ -79,16 +88,16 @@ def main():
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
-            parser.error('連携スクリプトはすでに動作中です。先に既存の監視を終了してください。')
+            raise RuntimeError('連携スクリプトはすでに動作中です。先に既存の監視を終了してください。')
         for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
             signal.signal(sig, interrupt)
         try:
             bridge.reset()
-            print(f'対象PC: {args.target}。Macから対象PCへ一度移動すると有効になります。', flush=True)
+            logging.info(f'対象PC: {args.target}。Macから対象PCへ一度移動すると有効になります。')
             watch(args.log.expanduser(), seconds=0,
                   on_line=bridge.handle_line, on_reset=bridge.reset)
         except KeyboardInterrupt:
-            print('\n連携を終了します。', flush=True)
+            logging.info('連携を終了します。')
         finally:
             # Avoid interrupting the cleanup with a second Ctrl+C.
             for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
@@ -97,4 +106,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception:
+        logging.exception('連携監視が停止しました。')
+        raise SystemExit(1)
