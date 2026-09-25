@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "version": "1.3.1",
+  "name": "CustomEnter",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://discord.com/*"
+      ],
+      "js": [
+        "discord.js"
+      ]
+    },
+    {
+      "matches": [
+        "https://my.replika.com/*"
+      ],
+      "js": [
+        "replika.js"
+      ]
+    },
+    {
+      "matches": [
+        "https://chatgpt.com/*"
+      ],
+      "js": [
+        "chatgpt.js"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://app.slack.com/*"
+      ],
+      "js": [
+        "slack.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "permissions": [
+    "activeTab"
+  ]
+}
