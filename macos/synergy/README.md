@@ -4,7 +4,7 @@
 
 ## 登録・起動
 
-1. `../karabiner/synergy-ime.json` を `~/.config/karabiner/assets/complex_modifications/` にコピー。
+1. `macos/karabiner/remote-ime.json` を `~/.config/karabiner/assets/complex_modifications/` にコピー。
 2. Karabinerの「Add predefined rule」からSynergyルールを追加し、一番上へ移動。
 3. MacのCapsLockをOFFにして、次を実行。
 
@@ -13,8 +13,8 @@ python3 "./macos/synergy/bridge_karabiner.py"
 ```
 
 起動後にMacからWindowsへ移動すると専用ルールがONになります。
-v6はPowerToysを利用し、左Cmd単押しでIME OFF、右Cmd単押しでIME ONを行います。
-旧Synergyルールと検証用ルールを無効にし、v6を追加してください。ファイルの上書きだけでは追加済みルールは更新されません。
+v7はv6と同じくPowerToysを利用し、左Cmd単押しでIME OFF、右Cmd単押しでIME ONを行います。
+旧Synergyルールと検証用ルールを無効にし、v7を追加してください。ファイルの上書きだけでは追加済みルールは更新されません。
 Windows単体およびMacからの実キーCommand+Shift操作で変換動作をユーザーが確認済み。v6のSynergy経由の左右Cmd単押しは2026-09-25にユーザーが成功確認済みです。最終チェック各項目の個別結果は未確認です。
 Cmdを他のキーと組み合わせる操作は維持します。
 手動起動はCtrl+Cで終了すると専用ルールがOFFになります。自動起動中は手動で重複起動しないでください。
@@ -33,6 +33,9 @@ Cmdを他のキーと組み合わせる操作は維持します。
 
 ## 検知と終了
 
+起動時に `~/Library/Logs/Synergy/synergy.jsonl` があれば優先し、なければ旧 `synergy.log` を選びます。
+JSONLの `msg` を読み出し、旧テキスト形式と同じ画面移動判定を行います。`--log` で監視ファイルを明示することもできます。
+Synergyの更新でログファイル名・形式が変わった場合は、監視スクリプトの再起動が必要です（実行中の監視先は固定）。
 ログをkqueueで監視し、Karabiner変数 `customenter_synergy_windows` を変更します。
 画面移動、対象PCの切断、Macへの復帰、core停止、ログの消失・入れ替え・縮小で状態を更新します。
 起動時は過去のログから現在位置を推測せずOFFで開始します。
@@ -97,3 +100,37 @@ mkdir -p "$HOME/Library/LaunchAgents"
 cp /tmp/local.inputhelper.synergy-ime.plist "$HOME/Library/LaunchAgents/"
 launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/local.inputhelper.synergy-ime.plist"
 ```
+
+
+## Macの前面アプリとSynergyの競合対策（v7）
+
+SynergyでWindowsへ移動しても、Macの前面アプリはChromeリモートデスクトップ等のまま残ります。
+アプリ別ルールには `customenter_synergy_windows != 1` の条件を追加し、Windows操作中は適用しません。
+Macへ戻り変数が0になると、元のアプリ別操作が再び有効になります。
+
+- `macos/karabiner/remote-ime.json` のSynergyルール: v7。単押しの送信内容は成功済みv6と同じ。追加の修飾キーを押した状態のCmdは、そのまま通して下位のMac用IMEルールへの適用を防ぎます。
+- `macos/karabiner/remote-ime.json` のChromeリモートデスクトップルール: v3。Synergy操作中の除外条件を追加。Chromeリモートデスクトップ自体で使うCaps Lock方式は維持します。
+- `macos/karabiner/enter-newline.json` のChatGPT／Claudeルール: v2。Synergy操作中はEnterとCtrl+Enterのアプリ別変換を適用しません。
+
+### 手動反映
+
+上記2ファイル（`remote-ime.json` と `enter-newline.json`）を `~/.config/karabiner/assets/complex_modifications/` にコピーします。
+KarabinerのComplex Modificationsで旧版の該当ルールを無効化または削除し、Add predefined ruleから新しい版を追加してください。
+Synergy v7は一番上へ配置します。ファイルの上書きだけでは登録済みルールは変わりません。
+各JSONにはアプリ別のルールが2つずつ含まれます。必要なルールをそれぞれ追加してください。
+以前の個別JSONをコピー済みの場合は、インポート候補の重複を避けるため、コピー先の旧ファイルも削除してください。旧ファイルの削除だけでは登録済みルールは削除されません。
+監視スクリプトの再起動や、Windows側のPowerToysの設定変更は不要です。
+
+### 実機確認と切り分け
+
+1. MacでChromeリモートデスクトップを前面にし、左右CmdのIME操作を確認。
+2. 前面アプリを変えずにSynergyでWindowsへ移動し、左右Cmd単押し、Cmd+C/V、Shiftを先に押したCmdとの組み合わせを確認。
+3. Macへ戻り、Chromeリモートデスクトップ用のIME操作が復帰することを確認。
+4. ChatGPT／ClaudeをMacの前面にした場合も、Synergy側のEnter・Ctrl+Enterがそのまま届くことを確認。
+
+単押しのSynergyルールは以前から最上位でした。そのため、修飾キーなしの単押しでも失敗する場合は、ルール競合だけでは説明できません。
+Karabiner-EventViewerのVariablesで、Windowsへ移動したときに `customenter_synergy_windows` が1、Macへ戻ると0になるか確認します。
+変数が切り替わらなければ `~/Library/Logs/InputHelper/synergy-ime.log` の画面移動・エラーとSynergyの接続状態を確認してください。
+この修正の条件・送信内容は静的に検証していますが、ChromeリモートデスクトップとSynergyを併用する実機確認は別途必要です。
+
+条件判定はKarabiner公式の[ルール優先順位](https://karabiner-elements.pqrs.org/docs/json/complex-modifications-manipulator-evaluation-priority/)と[修飾キー条件](https://karabiner-elements.pqrs.org/docs/json/complex-modifications-manipulator-definition/from/modifiers/)に基づきます。

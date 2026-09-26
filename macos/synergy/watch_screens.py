@@ -3,6 +3,7 @@
 
 import argparse
 from contextlib import closing
+import json
 import os
 import logging
 from pathlib import Path
@@ -15,7 +16,26 @@ TRANSITION = re.compile(r'\b(switch|jump) from "([^"]+)" to "([^"]+)"')
 TIMESTAMP = re.compile(r'\[(\d{4}-\d{2}-\d{2}T[^\]]+)\]')
 
 
+def default_log():
+    directory = Path.home() / 'Library/Logs/Synergy'
+    structured = directory / 'synergy.jsonl'
+    return structured if structured.exists() else directory / 'synergy.log'
+
+
+def log_message(line):
+    """Decode current JSONL logs while retaining support for legacy text logs."""
+    if not line.lstrip().startswith('{'):
+        return line
+    try:
+        record = json.loads(line)
+    except json.JSONDecodeError:
+        return ''
+    message = record.get('msg') if isinstance(record, dict) else None
+    return message if isinstance(message, str) else ''
+
+
 def describe(line):
+    line = log_message(line)
     match = TRANSITION.search(line)
     if not match:
         return None
@@ -128,7 +148,7 @@ def main():
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--log', type=Path,
-                        default=Path.home() / 'Library/Logs/Synergy/synergy.log')
+                        default=default_log())
     parser.add_argument('--seconds', type=float, default=0,
                         help='指定秒数で終了。省略時はCtrl+Cまで監視')
     args = parser.parse_args()

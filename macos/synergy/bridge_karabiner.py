@@ -13,7 +13,7 @@ import signal
 import subprocess
 import tempfile
 
-from watch_screens import TRANSITION, watch
+from watch_screens import TRANSITION, default_log, log_message, watch
 
 
 CLI = Path('/Library/Application Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli')
@@ -46,6 +46,7 @@ class Bridge:
         self.set_active(False)
 
     def handle_line(self, line):
+        line = log_message(line)
         transition = TRANSITION.search(line)
         if transition:
             self.set_active(transition.group(3).casefold() == self.target)
@@ -65,7 +66,7 @@ def interrupt(signum, frame):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--log', type=Path,
-                        default=Path.home() / 'Library/Logs/Synergy/synergy.log')
+                        default=default_log())
     parser.add_argument('--target', default='s500plus-27441e4d')
     parser.add_argument('--reset', action='store_true', help='監視せず、Windows用ルールをOFFにする')
     parser.add_argument('--service-log', type=Path, help='容量制限付きの監視ログ')
