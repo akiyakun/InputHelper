@@ -1,5 +1,5 @@
 {
-  "title": "Remote IME - Synergy and Chrome Remote Desktop",
+  "title": "Remote IME - Synergy, Chrome Remote Desktop and Windows App",
   "rules": [
     {
       "description": "Synergy: Cmd tap IME off/on (v7: isolate Mac app rules, PowerToys Ctrl+Shift+9/0)",
@@ -259,6 +259,171 @@
               "type": "frontmost_application_if",
               "bundle_identifiers": [
                 "^com\\.google\\.Chrome\\.app\\.cmkncekebbebpfilplodngbpllndjkfo$"
+              ]
+            },
+            {
+              "type": "variable_unless",
+              "name": "customenter_synergy_windows",
+              "value": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Windows App: Cmd tap and Eisu/Kana IME off/on (v1: PowerToys Ctrl+Shift+9/0)",
+      "manipulators": [
+        {
+          "type": "basic",
+          "description": "left Cmd tap: IME OFF via PowerToys; Cmd combinations send Ctrl",
+          "from": {
+            "key_code": "left_command",
+            "modifiers": {
+              "optional": [
+                "caps_lock"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "left_control",
+              "lazy": true
+            }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "9",
+              "modifiers": [
+                "left_control",
+                "left_shift"
+              ]
+            },
+            {
+              "key_code": "vk_none"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$"
+              ]
+            },
+            {
+              "type": "variable_unless",
+              "name": "customenter_synergy_windows",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "japanese_eisuu: IME OFF via PowerToys",
+          "from": {
+            "key_code": "japanese_eisuu",
+            "modifiers": {
+              "optional": [
+                "caps_lock"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "9",
+              "modifiers": [
+                "left_control",
+                "left_shift"
+              ]
+            },
+            {
+              "key_code": "vk_none"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$"
+              ]
+            },
+            {
+              "type": "variable_unless",
+              "name": "customenter_synergy_windows",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "right Cmd tap: IME ON via PowerToys; Cmd combinations send Ctrl",
+          "from": {
+            "key_code": "right_command",
+            "modifiers": {
+              "optional": [
+                "caps_lock"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "right_control",
+              "lazy": true
+            }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "0",
+              "modifiers": [
+                "left_control",
+                "left_shift"
+              ]
+            },
+            {
+              "key_code": "vk_none"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$"
+              ]
+            },
+            {
+              "type": "variable_unless",
+              "name": "customenter_synergy_windows",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "japanese_kana: IME ON via PowerToys",
+          "from": {
+            "key_code": "japanese_kana",
+            "modifiers": {
+              "optional": [
+                "caps_lock"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "0",
+              "modifiers": [
+                "left_control",
+                "left_shift"
+              ]
+            },
+            {
+              "key_code": "vk_none"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$"
               ]
             },
             {

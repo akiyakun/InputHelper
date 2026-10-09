@@ -17,3 +17,18 @@ SynergyでWindowsを操作中（`customenter_synergy_windows = 1`）は適用し
 ### 動作確認
 
 Windows Appで接続し、Cmd+C/V、Cmd+A、Cmd+Shift+矢印がWindowsのCtrl操作として動くことを確認します。Macの別アプリへ切り替え、Cmdが通常どおり動くことも確認してください。
+
+## Windows Appで英数／かなを切り替え
+
+`remote-ime.json` の `Windows App: Cmd tap and Eisu/Kana IME off/on (v1: PowerToys Ctrl+Shift+9/0)` を追加すると、左Cmd単押しと英数キーでIMEをオフ、右Cmd単押しとかなキーでIMEをオンにします。Cmd+C/Vなどの組み合わせはCtrlとして送ります。ほかの修飾キーを押した状態のCmdは `remote-windows-keybind.json` が変換するため、両方のルールを有効にしてください。
+
+Windows側はSynergy用と同じ設定を利用します。
+
+- PowerToys Keyboard Managerの「ショートカットの再マップ」で、Ctrl+Shift+9 → IME Non-Convert、Ctrl+Shift+0 → IME Convertを設定（すべてのアプリ）。
+- Microsoft IMEのキー割り当てで、無変換 → IME-オフ、変換 → IME-オンを設定。
+
+`remote-ime.json` を `~/.config/karabiner/assets/complex_modifications/` にコピーし、Add predefined ruleから上記のWindows Appルールを追加します。配置順はSynergy → Windows AppのIME切替 → Windows AppのCmd→Ctrl → その他のCmd単押しIMEルールとしてください。
+
+Windows Appが前面のときだけ適用し、SynergyでWindowsを操作中は適用しません。接続一覧画面でもキーは変換されます。
+
+RDP接続先で、左右Cmd単押しと英数／かなキーによる切替、同じキーを連打した場合のIME状態維持、Cmd+C/V、Shiftを先に押したCmdとの組み合わせを確認してください。
