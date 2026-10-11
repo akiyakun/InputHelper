@@ -6,19 +6,78 @@
       "manipulators": [
         {
           "type": "basic",
+          "description": "left Cmd+Space: show local Alfred",
           "from": {
-            "key_code": "left_command",
-            "modifiers": { "optional": ["any"] }
+            "key_code": "spacebar",
+            "modifiers": {
+              "mandatory": [
+                "control"
+              ],
+              "optional": [
+                "caps_lock"
+              ]
+            }
           },
-          "to": [{ "key_code": "left_control" }],
+          "to": [
+            {
+              "shell_command": "/usr/bin/osascript -e 'tell application id \"com.runningwithcrayons.Alfred\" to search \"\"'",
+              "repeat": false
+            }
+          ],
           "conditions": [
             {
               "type": "frontmost_application_if",
-              "bundle_identifiers": ["^com\\.microsoft\\.rdc\\.macos$"]
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$"
+              ]
             },
             {
               "type": "variable_unless",
               "name": "customenter_synergy_windows",
+              "value": 1
+            },
+            {
+              "type": "variable_if",
+              "name": "inputhelper_rdp_left_command_held",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "right Cmd+Space: show local Alfred",
+          "from": {
+            "key_code": "spacebar",
+            "modifiers": {
+              "mandatory": [
+                "control"
+              ],
+              "optional": [
+                "caps_lock"
+              ]
+            }
+          },
+          "to": [
+            {
+              "shell_command": "/usr/bin/osascript -e 'tell application id \"com.runningwithcrayons.Alfred\" to search \"\"'",
+              "repeat": false
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$"
+              ]
+            },
+            {
+              "type": "variable_unless",
+              "name": "customenter_synergy_windows",
+              "value": 1
+            },
+            {
+              "type": "variable_if",
+              "name": "inputhelper_rdp_right_command_held",
               "value": 1
             }
           ]
@@ -26,19 +85,86 @@
         {
           "type": "basic",
           "from": {
-            "key_code": "right_command",
-            "modifiers": { "optional": ["any"] }
+            "key_code": "left_command",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
           },
-          "to": [{ "key_code": "right_control" }],
+          "to": [
+            {
+              "set_variable": {
+                "name": "inputhelper_rdp_left_command_held",
+                "value": 1
+              }
+            },
+            {
+              "key_code": "left_control"
+            }
+          ],
           "conditions": [
             {
               "type": "frontmost_application_if",
-              "bundle_identifiers": ["^com\\.microsoft\\.rdc\\.macos$"]
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$"
+              ]
             },
             {
               "type": "variable_unless",
               "name": "customenter_synergy_windows",
               "value": 1
+            }
+          ],
+          "to_after_key_up": [
+            {
+              "set_variable": {
+                "name": "inputhelper_rdp_left_command_held",
+                "value": 0
+              }
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "right_command",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "to": [
+            {
+              "set_variable": {
+                "name": "inputhelper_rdp_right_command_held",
+                "value": 1
+              }
+            },
+            {
+              "key_code": "right_control"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$"
+              ]
+            },
+            {
+              "type": "variable_unless",
+              "name": "customenter_synergy_windows",
+              "value": 1
+            }
+          ],
+          "to_after_key_up": [
+            {
+              "set_variable": {
+                "name": "inputhelper_rdp_right_command_held",
+                "value": 0
+              }
             }
           ]
         }

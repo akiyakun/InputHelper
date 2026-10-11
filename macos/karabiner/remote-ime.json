@@ -286,6 +286,12 @@
           },
           "to": [
             {
+              "set_variable": {
+                "name": "inputhelper_rdp_left_command_held",
+                "value": 1
+              }
+            },
+            {
               "key_code": "left_control",
               "lazy": true
             }
@@ -313,6 +319,14 @@
               "type": "variable_unless",
               "name": "customenter_synergy_windows",
               "value": 1
+            }
+          ],
+          "to_after_key_up": [
+            {
+              "set_variable": {
+                "name": "inputhelper_rdp_left_command_held",
+                "value": 0
+              }
             }
           ]
         },
@@ -366,6 +380,12 @@
           },
           "to": [
             {
+              "set_variable": {
+                "name": "inputhelper_rdp_right_command_held",
+                "value": 1
+              }
+            },
+            {
               "key_code": "right_control",
               "lazy": true
             }
@@ -393,6 +413,14 @@
               "type": "variable_unless",
               "name": "customenter_synergy_windows",
               "value": 1
+            }
+          ],
+          "to_after_key_up": [
+            {
+              "set_variable": {
+                "name": "inputhelper_rdp_right_command_held",
+                "value": 0
+              }
             }
           ]
         },

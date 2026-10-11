@@ -32,3 +32,13 @@ Windows側はSynergy用と同じ設定を利用します。
 Windows Appが前面のときだけ適用し、SynergyでWindowsを操作中は適用しません。接続一覧画面でもキーは変換されます。
 
 RDP接続先で、左右Cmd単押しと英数／かなキーによる切替、同じキーを連打した場合のIME状態維持、Cmd+C/V、Shiftを先に押したCmdとの組み合わせを確認してください。
+
+## Windows App使用中にCmd+SpaceでAlfredを開く
+
+`remote-windows-keybind.json` は、Windows Appが前面でも左右Cmd+SpaceでMac側のAlfred 5の検索欄を開きます。AppleScriptの `search` コマンドで直接呼び出します。
+
+Cmd→Ctrl変換時に左右Cmdの押下状態を変数へ記録し、キーを離したら解除します。`remote-ime.json` のWindows Appルールにも同じ記録処理が必要なので、両ファイルの登録済みルールを更新してください。IME切替 → Cmd→Ctrlの順序は維持します。
+
+物理Ctrl+Space、Cmd+Shift+Spaceはこの起動処理の対象外です。Synergy操作中も適用しません。Alfredが開いたらCmdを離して入力してください。
+
+動作確認: RDP中の左右Cmd+Spaceによる検索欄の表示、Cmd単押しのIME切替、Cmd+C/V、物理Ctrl+SpaceのWindows側への送信を確認します。初回にmacOSからAlfredの操作許可を求められた場合は許可してください。
