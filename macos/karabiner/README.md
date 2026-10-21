@@ -42,3 +42,21 @@ Cmd→Ctrl変換時に左右Cmdの押下状態を変数へ記録し、キーを�
 物理Ctrl+Space、Cmd+Shift+Spaceはこの起動処理の対象外です。Synergy操作中も適用しません。Alfredが開いたらCmdを離して入力してください。
 
 動作確認: RDP中の左右Cmd+Spaceによる検索欄の表示、Cmd単押しのIME切替、Cmd+C/V、物理Ctrl+SpaceのWindows側への送信を確認します。初回にmacOSからAlfredの操作許可を求められた場合は許可してください。
+
+## ClaudeとChatGPTでEnterを改行にする
+
+`enter-newline.json` はClaude（`com.anthropic.claudefordesktop`）とChatGPT（`com.openai.codex`）が前面のとき、EnterをShift+Enter（改行）に、Ctrl+EnterをEnter（送信）に変換します。SynergyでWindowsを操作中は適用しません。
+
+### Google日本語入力のキー設定
+
+IMEの変換中もEnterはShift+Enterとして届くため、Google日本語入力のキー設定にShift+Enterの確定がないと、変換中のEnterで確定できません。入力候補が出ていないときやスペースで変換した後だけ確定できず、Ctrl+Enterが必要になります。
+
+Google日本語入力の環境設定 → 一般 → キー設定の選択「編集...」で、次のエントリを追加してください。
+
+| モード | 入力キー | コマンド |
+| --- | --- | --- |
+| 変換前入力中 | Shift Enter | 確定 |
+| 変換中 | Shift Enter | 確定 |
+| サジェスト表示中 | Shift Enter | 確定 |
+
+動作確認: Claudeでひらがなを入力した直後、スペースで変換した後のそれぞれでEnterを押して確定できること、確定後のEnterで改行、Ctrl+Enterで送信されることを確認します。
