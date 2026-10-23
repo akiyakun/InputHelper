@@ -41,7 +41,7 @@ Windows Appで接続し、Cmd+C/V、Cmd+A、Cmd+Shift+矢印がWindowsのCtrl操
 Windows側は[Synergy用](synergy-ime.md)と同じ設定を利用します。
 
 - PowerToys Keyboard Managerの「ショートカットの再マップ」で、Ctrl+Shift+9 → IME Non-Convert、Ctrl+Shift+0 → IME Convertを設定（すべてのアプリ）。
-- Microsoft IMEのキー割り当てで、無変換 → IME-オフ、変換 → IME-オンを設定。
+- 無変換でIMEオフ、変換でIMEオンになるよう設定。Google日本語入力では `google-ime/keymap-windows.txt` をインポート（[手順](windows-enter-newline.md#imeの変換中のenter)）、Microsoft IMEではキー割り当てで無変換 → IME-オフ、変換 → IME-オンを設定。
 
 `macos/karabiner/remote-ime.json` を `~/.config/karabiner/assets/complex_modifications/` にコピーし、Add predefined ruleから上記のWindows Appルールを追加し、[ルールの配置順](#ルールの配置順)に従って並べ替えます。
 

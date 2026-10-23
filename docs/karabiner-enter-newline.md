@@ -2,7 +2,7 @@
 
 `macos/karabiner/enter-newline.json` はClaude（`com.anthropic.claudefordesktop`）とCodex（`com.openai.codex`）のデスクトップアプリが前面のとき、EnterをShift+Enter（改行）に、Ctrl+EnterをEnter（送信）に変換します。SynergyでWindowsを操作中（`customenter_synergy_windows = 1`）は適用しません。
 
-ブラウザ版のChatGPT・Slack・Discordは[Chrome拡張](chrome-extension-customenter.md)で対応します。
+ブラウザ版のChatGPT・Slack・Discordは[Chrome拡張](chrome-extension-customenter.md)で対応します。Windows AppやSynergyで操作するWindows上のClaudeは、Windows側の[AutoHotkey](windows-enter-newline.md)で対応します。
 
 ## 手動反映
 

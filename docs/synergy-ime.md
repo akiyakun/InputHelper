@@ -38,7 +38,7 @@ Windows操作中（`customenter_synergy_windows = 1`）は次のように動き�
 1. PowerToys Keyboard Managerの「ショートカットの再マップ」で、次を設定します。対象はすべてのアプリです。
    - Ctrl+Shift+9 → IME Non-Convert
    - Ctrl+Shift+0 → IME Convert
-2. Microsoft IMEのキー割り当てで、無変換 → IME-オフ、変換 → IME-オンを設定します。
+2. 無変換でIMEをオフ、変換でIMEをオンにします。Google日本語入力では `google-ime/keymap-windows.txt` をインポートします（[手順](windows-enter-newline.md#imeの変換中のenter)）。Microsoft IMEの場合は、キー割り当てで無変換 → IME-オフ、変換 → IME-オンを設定します。
 
 ### 2. Synergyの設定
 
