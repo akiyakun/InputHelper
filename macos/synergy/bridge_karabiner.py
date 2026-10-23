@@ -67,10 +67,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--log', type=Path,
                         default=default_log())
-    parser.add_argument('--target', default='s500plus-27441e4d')
+    parser.add_argument('--target', help='SynergyでのWindows側の画面名')
     parser.add_argument('--reset', action='store_true', help='監視せず、Windows用ルールをOFFにする')
     parser.add_argument('--service-log', type=Path, help='容量制限付きの監視ログ')
     args = parser.parse_args()
+    if not args.target and not args.reset:
+        parser.error('--target でWindows側の画面名を指定してください')
     handlers = None
     if args.service_log:
         args.service_log.parent.mkdir(parents=True, exist_ok=True)
@@ -80,7 +82,7 @@ def main():
                         format='%(asctime)s %(levelname)s %(message)s')
     if not CLI.is_file():
         raise RuntimeError(f'Karabiner CLIが見つかりません: {CLI}')
-    bridge = Bridge(args.target)
+    bridge = Bridge(args.target or '')
     if args.reset:
         bridge.reset()
         return

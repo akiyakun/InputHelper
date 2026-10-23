@@ -13,14 +13,6 @@
     },
     {
       "matches": [
-        "https://my.replika.com/*"
-      ],
-      "js": [
-        "replika.js"
-      ]
-    },
-    {
-      "matches": [
         "https://chatgpt.com/*"
       ],
       "js": [

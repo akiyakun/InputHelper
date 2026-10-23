@@ -1,8 +1,8 @@
 {
-  "title": "CustomEnter - Enter newline for ChatGPT and Claude",
+  "title": "CustomEnter - Enter newline for Codex and Claude",
   "rules": [
     {
-      "description": "CustomEnter: ChatGPT - Enter newline, Ctrl+Enter send (v2: disabled while using Synergy)",
+      "description": "CustomEnter: Codex - Enter newline, Ctrl+Enter send (v2: disabled while using Synergy)",
       "manipulators": [
         {
           "type": "basic",
