@@ -59,6 +59,7 @@ GUIでしかできない作業は、`docs/windows-setup.md` の「手作業」�
 - PowerToysの `PowerToys.DSC.exe set --module App --resource settings` に一部の項目だけを渡すと、渡さなかった各モジュールの有効/無効が既定値に戻ってしまう。必ず `get` した設定全体を変更して渡す（スクリプトはそうしている）。
 - PowerShellからDSCに `--input` でJSONを渡すときは、スクリプトの `ConvertTo-NativeArg` のように、`"` の直前と末尾のバックスラッシュも二重にして引用する。`"` を `\"` に置き換えるだけでは、`\"` を含むJSONが壊れる。
 - DSCの `KeyboardManager profile` の `set` はプロファイル全体を置き換え、指定しなかった再マップを消す。スクリプトは `get` した内容に2件をマージしてから `set` している。手で `set` するときも同じようにする。
+- PowerToysのGUIで作った再マップは `LCtrl+LShift+9` のように左右付きで保存される。スクリプトは左右を外して比べ、同じショートカットなら置き換える（`Ctrl+Shift+9` と重複させない）。
 - DSCのKeyboard Managerはキー名 `IME Non-Convert` / `IME Convert` を受け付けないため、仮想キーコード `0x1D` / `0x1C` で指定する。
 - `setup-windows.ps1` はBOM付きUTF-8で保存する。BOMがないとWindows PowerShell 5.1が日本語をShift-JISとして読み、構文エラーになる。
 - Google日本語入力のキー設定は設定DBに保存されていて、外から安全に書き換えられないため、インポートはユーザーに頼む。

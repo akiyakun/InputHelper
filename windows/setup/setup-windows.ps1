@@ -123,7 +123,8 @@ $ours = @(
     [pscustomobject]@{ from = 'Ctrl+Shift+9'; to = '0x1D' }
     [pscustomobject]@{ from = 'Ctrl+Shift+0'; to = '0x1C' }
 )
-$others = @($kbm.shortcuts | Where-Object { $_ -and -not ($_.from -in $ours.from -and -not $_.targetApp) })
+# GUIで作ると LCtrl+LShift+9 のように左右付きで保存されるため、左右を外して比べ、同じショートカットは置き換える
+$others = @($kbm.shortcuts | Where-Object { $_ -and -not (($_.from -replace '\b[LR](Ctrl|Shift|Alt|Win)\b', '$1') -in $ours.from -and -not $_.targetApp) })
 $merged = [pscustomobject]@{ profile = [pscustomobject]@{ keys = @($kbm.keys | Where-Object { $_ }); shortcuts = $others + $ours } }
 $null = Invoke-Dsc set KeyboardManager profile ($merged | ConvertTo-Json -Depth 10 -Compress)
 Write-Done "Ctrl+Shift+9 → 無変換、Ctrl+Shift+0 → 変換 を設定しました（ほかの再マップ $($others.Count) 件はそのまま）"
