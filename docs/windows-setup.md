@@ -45,7 +45,7 @@ powershell -ExecutionPolicy Bypass -File .\windows\setup\setup-windows.ps1
 | アプリのインストール | wingetでAutoHotkey v2、Google日本語入力、PowerToys、Chrome（未導入の場合）、Synergy（`-Synergy` のとき） |
 | AutoHotkey | `enter-newline.ahk` のショートカットをスタートアップに置いて起動（[詳細](windows-enter-newline.md)） |
 | PowerToys Keyboard Manager | Ctrl+Shift+9 → IME Non-Convert、Ctrl+Shift+0 → IME Convert（[詳細](synergy-ime.md#1-windows側の設定)）。ほかの再マップは残す |
-| PowerToys | ログオン時の自動起動とKeyboard ManagerをON。ほかのモジュールの有効/無効は変更しない |
+| PowerToys | ログオン時の自動起動とKeyboard ManagerをON（未設定ならPowerToysを再起動して反映）。ほかのモジュールの有効/無効は変更しない |
 | 入力方式 | Google日本語入力を既定の入力方式にする |
 
 ## 手作業

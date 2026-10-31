@@ -132,12 +132,23 @@ Write-Done "Ctrl+Shift+9 → 無変換、Ctrl+Shift+0 → 変換 を設定しま
 # 4. PowerToysの自動起動とKeyboard Manager有効化
 # DSCの App settings は、渡さなかった項目（各モジュールの有効/無効など）を既定値に戻す。
 # 現在の設定をgetで読み、2項目だけ変えて全体を渡す。
+# 動作中のPowerToysはsettings.jsonの変更を読み直さず、インストール直後の初回起動では書き戻すこともある。
+# そのため、止めてから書き換えて起動し直す。
 Write-Step 'PowerToysの自動起動とKeyboard Managerを有効化'
 $app = Invoke-Dsc get App settings '{}'
-$app.settings.startup = $true
-$app.settings.enabled | Add-Member -NotePropertyName 'Keyboard Manager' -NotePropertyValue $true -Force
-$null = Invoke-Dsc set App settings ($app | ConvertTo-Json -Depth 20 -Compress)
-Write-Done 'startup と Keyboard Manager をONにしました'
+$engineRunning = Get-Process 'PowerToys.KeyboardManagerEngine' -ErrorAction SilentlyContinue
+if ($app.settings.startup -and $app.settings.enabled.'Keyboard Manager' -and $engineRunning) {
+    Write-Done 'startup と Keyboard Manager はONになっています'
+} else {
+    $running = Get-Process | Where-Object { $_.Name -like 'PowerToys*' }
+    $running | Stop-Process -Force -ErrorAction SilentlyContinue
+    $running | Wait-Process -Timeout 10 -ErrorAction SilentlyContinue
+    $app = Invoke-Dsc get App settings '{}'
+    $app.settings.startup = $true
+    $app.settings.enabled | Add-Member -NotePropertyName 'Keyboard Manager' -NotePropertyValue $true -Force
+    $null = Invoke-Dsc set App settings ($app | ConvertTo-Json -Depth 20 -Compress)
+    Write-Done 'startup と Keyboard Manager をONにしました'
+}
 if (-not (Get-Process 'PowerToys' -ErrorAction SilentlyContinue)) {
     Start-Process (Join-Path $ptDir 'PowerToys.exe')
 }

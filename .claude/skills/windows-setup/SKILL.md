@@ -57,6 +57,7 @@ GUIでしかできない作業は、`docs/windows-setup.md` の「手作業」�
 ## 注意
 
 - PowerToysの `PowerToys.DSC.exe set --module App --resource settings` に一部の項目だけを渡すと、渡さなかった各モジュールの有効/無効が既定値に戻ってしまう。必ず `get` した設定全体を変更して渡す（スクリプトはそうしている）。
+- 動作中のPowerToysは `settings.json` の変更を読み直さず、インストール直後の初回起動では書き戻すこともある。自動起動タスクとKeyboard Managerのエンジンは、PowerToysの起動時に設定どおり反映される。そのため、`set` はPowerToysを止めてから行い、そのあと起動し直す（スクリプトはそうしている）。
 - PowerShellからDSCに `--input` でJSONを渡すときは、スクリプトの `ConvertTo-NativeArg` のように、`"` の直前と末尾のバックスラッシュも二重にして引用する。`"` を `\"` に置き換えるだけでは、`\"` を含むJSONが壊れる。
 - DSCの `KeyboardManager profile` の `set` はプロファイル全体を置き換え、指定しなかった再マップを消す。スクリプトは `get` した内容に2件をマージしてから `set` している。手で `set` するときも同じようにする。
 - PowerToysのGUIで作った再マップは `LCtrl+LShift+9` のように左右付きで保存される。スクリプトは左右を外して比べ、同じショートカットなら置き換える（`Ctrl+Shift+9` と重複させない）。
